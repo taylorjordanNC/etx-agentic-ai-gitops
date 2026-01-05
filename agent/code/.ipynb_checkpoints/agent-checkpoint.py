@@ -12,7 +12,7 @@ from utils import step_printer
 
 llama_stack_url = environ.get(
     'LLAMA_STACK_URL',
-    "http://user2-llama-stack-service.user2-llama-stack.svc.cluster.local:8321"
+    "http://userX-llama-stack-service.userX-llama-stack.svc.cluster.local:8321"
 )
 model_id = environ.get('MODEL_ID', "granite-31-2b-instruct")
 model_prompt = """
@@ -24,7 +24,7 @@ strategy = {"type": "greedy"}
 max_tokens = int(environ.get('MAX_TOKENS', '512'))
 client_timeout = float(environ.get('CLIENT_TIMEOUT', '600.0'))
 max_infer_iterations = int(environ.get('MAX_INFER_ITERATIONS', '10'))
-github_owner = environ.get('GITHUB_OWNER', 'taylorjordanNC')
+github_owner = environ.get('GITHUB_OWNER', 'redhat-ai-services')
 
 print(
     f'Inference Parameters:\n\tModel: {model_id}\n'
