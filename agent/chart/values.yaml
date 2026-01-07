@@ -1,12 +1,12 @@
 ---
-namespace: user1-ai-agent
+namespace: user2-ai-agent
 registry: image-registry.openshift-image-registry.svc:5000
 application_name: ai-agent
 
 # Agent Configuration
 agentConfig:
   clientTimeout: "600.0"
-  llamaStackUrl: "http://user1-llama-stack-service.user1-llama-stack.svc.cluster.local:8321"
+  llamaStackUrl: "http://user2-llama-stack-service.user2-llama-stack.svc.cluster.local:8321"
   maxInferIterations: "50"
   maxTokens: "5000"
   modelId: "granite-3-2-8b-instruct"
