@@ -60,7 +60,7 @@ agent = ReActAgent(
 print('instantiated ReAct agent')
 
 
-def run_agent(pod_name, namespace):
+def run_agent(pod_name, namespace, container_name):
     print(f'reporting failure on {pod_name} in {namespace}')
     # user_prompts = [
     #     f"Review the OpenShift logs for the pod '{pod_name}',in the '{namespace}' namespace. "
@@ -72,14 +72,14 @@ def run_agent(pod_name, namespace):
     # ]
     # Build prompt safely to avoid f-string formatting issues
     try:
-        print(f"Building prompt for pod: {pod_name}, namespace: {namespace}")
+        print(f"Building prompt for pod: {pod_name}, container: {container_name}, namespace: {namespace}")
         
         # Use .format() to avoid f-string curly brace conflicts
         prompt_template = """You are an expert OpenShift administrator. Your task is to analyze pod logs, summarize the error, and generate a JSON object to create a GitHub issue for tracking. Follow the format in the examples below.
         
         ---
         EXAMPLE 1:
-        Input: The logs for pod 'frontend-v2-abcde' in namespace 'webapp' show: ImagePullBackOff: Back-off pulling image 'my-registry/frontend:latest'.
+        Input: The logs for container 'frontend' in pod 'frontend-v2-abcde' in namespace 'webapp' show: ImagePullBackOff: Back-off pulling image 'my-registry/frontend:latest'.
 
         Output:
         The pod is in an **ImagePullBackOff** state. This means Kubernetes could not pull the container image 'my-registry/frontend:latest', likely due to an incorrect image tag or authentication issues.
@@ -87,7 +87,7 @@ def run_agent(pod_name, namespace):
 
         ---
         EXAMPLE 2:
-        Input: The logs for pod 'data-processor-xyz' in namespace 'pipelines' show: CrashLoopBackOff. Last state: OOMKilled.
+        Input: The logs for the container 'data-processor' in the pod 'data-processor-xyz' in namespace 'pipelines' show: CrashLoopBackOff. Last state: OOMKilled.
 
         Output:
         The pod is in a **CrashLoopBackOff** state because it was **OOMKilled**. The container tried to use more memory than its configured limit.
@@ -96,14 +96,14 @@ def run_agent(pod_name, namespace):
 
         NOW, YOUR TURN:
 
-        Input: Review the OpenShift logs for the pod '{pod_name}' in the '{namespace}' namespace. If the logs indicate an error, search for the solution, create a summary message with the category and explanation of the error, and create a Github issue using {{\"name\":\"create_issue\",\"arguments\":{{\"owner\":\"{github_owner}\",\"repo\":\"etx-agentic-ai-gitops\",\"title\":\"Issue with Etx pipeline\",\"body\":\"<summary of the error>\"}}}}. DO NOT add any optional parameters.
+        Input: Review the OpenShift logs for the container '{container_name}' in pod '{pod_name}' in the '{namespace}' namespace. If the logs indicate an error, search for the solution, create a summary message with the category and explanation of the error, and create a Github issue using {{\"name\":\"create_issue\",\"arguments\":{{\"owner\":\"{github_owner}\",\"repo\":\"etx-agentic-ai-gitops\",\"title\":\"Issue with Etx pipeline\",\"body\":\"<summary of the error>\"}}}}. DO NOT add any optional parameters.
 
         ONLY tail the last 10 lines of the pod, no more.
         The JSON object formatted EXACTLY as outlined above.
         """
         
         # Safely format the prompt with variables
-        formatted_prompt = prompt_template.format(pod_name=pod_name, namespace=namespace, github_owner=github_owner)
+        formatted_prompt = prompt_template.format(pod_name=pod_name, namespace=namespace, container_name=container_name, github_owner=github_owner)
         print("✅ Prompt built successfully")
         print(f"Prompt length: {len(formatted_prompt)} characters")
         
@@ -114,7 +114,7 @@ def run_agent(pod_name, namespace):
         print(f"Error type: {type(e).__name__}")
         # Fallback to simple prompt without examples
         fallback_prompt = (
-            f"Review the OpenShift logs for the pod '{pod_name}' in the '{namespace}' namespace. "
+            f"Review the OpenShift logs for the container '{container_name}' in the pod '{pod_name}' in the '{namespace}' namespace. "
             "If the logs indicate an error, search for the solution and create a summary message. "
             f"Then create a Github issue with owner '{github_owner}', repo 'etx-agentic-ai-gitops', "
             "title 'Issue with Etx pipeline', and body containing the error summary."

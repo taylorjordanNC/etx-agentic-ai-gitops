@@ -25,7 +25,7 @@ async def report_failure(pipeline_failure: PipelineFailure):
           f'{pipeline_failure}')
     try:
         run_agent(
-            pipeline_failure.pod_name, pipeline_failure.namespace
+            pipeline_failure.pod_name, pipeline_failure.namespace, pipeline_failure.container_name
         )
     except Exception as e:
         print(f'encountered error: {e}')
