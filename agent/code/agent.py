@@ -12,7 +12,7 @@ from utils import step_printer
 
 llama_stack_url = environ.get(
     'LLAMA_STACK_URL',
-    "http://user3-llama-stack-service.user3-llama-stack.svc.cluster.local:8321"
+    "http://user1-llama-stack-service.user1-llama-stack.svc.cluster.local:8321"
 )
 model_id = environ.get('MODEL_ID', "granite-3-2-8b-instruct")
 model_prompt = """
