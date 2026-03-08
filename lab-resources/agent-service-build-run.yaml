@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   generateName: agent-service-build-run-
-  namespace: user3-ai-agent
+  namespace: user1-ai-agent
 spec:
   taskRunTemplate:
     serviceAccountName: pipeline
